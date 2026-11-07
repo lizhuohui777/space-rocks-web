@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>学习指南 · Space Rocks</title>
+  <link rel="stylesheet" href="/static/lobby.css">
+  <style>a, code {color:#9be7de} pre {overflow:auto} h1 {font-size:2.6rem}</style>
+</head>
+<body><main>
+  <a href="/">← 回到游戏大厅</a>
+  <h1>学习指南</h1>
+  <section><h2>实验一 · 跟踪一次注册</h2>
+    <ol>
+      <li>打开大厅和开发者工具的 Network（网络）。填入用户名和至少 8 个字符的练习密码，点击「注册新账号」。</li>
+      <li>点开 <code>POST /api/register</code>。Payload 显示表单，Response 显示后端返回的 JSON，成功状态码是 201。</li>
+      <li>在编辑器展开项目根目录的 <code>static</code>，打开 <code>lobby.js</code>。找到 <code>fetch()</code>，这行从浏览器发出请求。</li>
+      <li>打开 <code>app.py</code> 找到 <code>register()</code>。Flask 根据网址和请求方法调用它。它校验输入，将密码哈希交给 <code>storage.add_player()</code>。</li>
+      <li>打开 <code>space_rocks/storage.py</code> 找到 <code>INSERT INTO players</code>。写入后，<code>app.py</code> 用 <code>jsonify()</code> 返回消息。浏览器里的 <code>lobby.js</code> 用 <code>message.textContent</code> 将消息显示到页面。</li>
+    </ol>
+    <p>注册后点击登录。后端验证密码，浏览器接收会话 Cookie。之后读取战绩时，后端通过会话找到当前玩家。</p>
+  </section>
+  <section><h2>实验二 · 保存一局</h2>
+    <p>登录后点击「开始桌面游戏」。浏览器发送 <code>POST /api/play</code>，后端在本机启动 Pygame。游戏判定胜负时调用 <code>on_result</code> 回调。提前按 Esc 也会记录退出。返回大厅点击「刷新战绩」，浏览器通过 <code>GET /api/results</code> 读取当前玩家最近的记录。</p>
+    <p>数据库文件是 <code>data/players.sqlite3</code>。账号保存在 <code>players</code> 表，战绩保存在 <code>results</code> 表。每条战绩的 <code>player_id</code> 对应玩家的 <code>id</code>。</p>
+  </section>
+  <section><h2>重新启动大厅</h2>
+    <p>在游戏项目根目录运行：</p>
+    <pre><code>.venv/bin/python app.py</code></pre>
+    <p>首次安装依赖用 <code>.venv/bin/python -m pip install -r requirements.txt</code>。原单机入口是 <code>.venv/bin/python space_rocks</code>。</p>
+  </section>
+</main></body></html>
